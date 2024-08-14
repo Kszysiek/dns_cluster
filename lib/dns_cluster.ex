@@ -121,11 +121,11 @@ defmodule DNSCluster do
   end
 
   defp connect_new_nodes(%{resolver: resolver, connect_timeout: timeout} = state) do
-    visible_nodes = resolver.list_nodes()
+    visible_nodes = Enum.map(resolver.list_nodes(), &to_string/1)
     visible_nodes_string = Enum.join(visible_nodes, ", ")
     log(state, "For #{node()} visible nodes: #{visible_nodes_string}")
 
-    node_names = for name <- visible_nodes, into: MapSet.new(), do: to_string(name)
+    node_names = MapSet.new(visible_nodes)
 
     ips = discover_ips(state)
 
